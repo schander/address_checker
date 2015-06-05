@@ -7,7 +7,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
 import unittest, time, re
 
-POSTCODES = ["mk429gp"]
+POSTCODES = ["mk429gn"]
 class AddressChecker(unittest.TestCase):
     def setUp(self):
         self.driver = webdriver.Firefox()
@@ -19,7 +19,7 @@ class AddressChecker(unittest.TestCase):
     def test_address_checker(self):
         for postcode in POSTCODES:
             for x in range(1,3):
-                print "Checking address {0} {1}".format(str(x), POSTCODE)
+                print "Checking address {0} {1}".format(str(x), postcode)
                 driver = self.driver
                 driver.get(self.base_url)
                 driver.find_element_by_link_text("Address Checker").click()
@@ -30,7 +30,7 @@ class AddressChecker(unittest.TestCase):
                 driver.find_element_by_name("buildingnumber").send_keys(str(x))
                 driver.find_element_by_css_selector("input.form_button").click()
                 self.driver.implicitly_wait(10)
-                self.assertEqual("WBC FTTP", driver.find_element_by_xpath("//tr[2]/td/span").text,"{0} {1} is not FTTP enabled".format(str(x), POSTCODE))
+                self.assertEqual("WBC FTTP", driver.find_element_by_xpath("//tr[2]/td/span").text,"{0} {1} is not FTTP enabled".format(str(x), postcode))
                 time.sleep(5)
 
     
