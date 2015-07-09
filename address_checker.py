@@ -22,31 +22,52 @@ class AddressChecker(unittest.TestCase):
     def setUp(self):
         self.driver = webdriver.Firefox()
         self.driver.implicitly_wait(10)
-        self.base_url = "http://www.dslchecker.bt.com/"
+        self.base_url_bt = "http://www.dslchecker.bt.com/"
+        self.base_url_virgin = "http://www.virginmedia.com/"
         self.verificationErrors = []
         self.accept_next_alert = True
+
+    def test_address_virgin(self):
+        driver = self.driver
+        driver.get(self.base_url_virgin)
+        driver.find_element_by_link_text("Join us").click()
+        postcode = driver.find_element_by_id("postcode-field")
+        print "got elelment postcode"
+        postcode.send_keys("mk429gg")
+        driver.find_element_by_css_selector("input.btn.btn-secondary.btn_serve").click()
+        address_elements_drop = driver.find_element_by_class_name("dropDown")
+        address_elements = address_elements_drop.find_elements_by_tag_name("li")
+        index = 0
+        for address in address_elements:
+            index += 1 
+            print "address is: {0} index {1}".format(address.text, index)
+            if u"23" in address.text:
+                print "got address 23 index:{0}".format(index)
+                driver.find_element_by_xpath("//form[@id='serviceabilityForm']/div/div/div/div/div/div/ul/li[" + str(index) + "]").click
+            #driver.find_element_by_name("#postcode-field")
+
     
-    def test_address_checker(self):
-        for postcode in POSTCODES:
-            for x in range(2,3):
-                driver = self.driver
-                driver.get(self.base_url)
-                driver.find_element_by_link_text("Address Checker").click()
-                driver.find_element_by_css_selector("input.form_button").click()
-                driver.find_element_by_name("PostCode").clear()
-                driver.find_element_by_name("PostCode").send_keys(postcode)
-                driver.find_element_by_name("buildingnumber").clear()
-                driver.find_element_by_name("buildingnumber").send_keys(str(x))
-                driver.find_element_by_css_selector("input.form_button").click()
-                self.driver.implicitly_wait(10)
-                #Get the cabinet number
-                address_info_text = driver.find_element_by_xpath("//span/span/span").text
-                address_cab_line = address_info_text.split("\n")[0]
-                if "WBC FTTP" in driver.find_element_by_xpath("//tr[2]/td/span").text:
-                    print "Checking address {0} {1}".format(str(x), postcode)
-                    print "Cabinet {0}".format(address_cab_line[-3:])
-                    #self.assertEqual("WBC FTTP", driver.find_element_by_xpath("//tr[2]/td/span").text,"{0} {1} is not FTTP enabled".format(str(x), postcode))
-                time.sleep(5)
+    # def test_address_checker(self):
+    #     for postcode in POSTCODES:
+    #         for x in range(2,3):
+    #             driver = self.driver
+    #             driver.get(self.base_url_bt)
+    #             driver.find_element_by_link_text("Address Checker").click()
+    #             driver.find_element_by_css_selector("input.form_button").click()
+    #             driver.find_element_by_name("PostCode").clear()
+    #             driver.find_element_by_name("PostCode").send_keys(postcode)
+    #             driver.find_element_by_name("buildingnumber").clear()
+    #             driver.find_element_by_name("buildingnumber").send_keys(str(x))
+    #             driver.find_element_by_css_selector("input.form_button").click()
+    #             self.driver.implicitly_wait(10)
+    #             #Get the cabinet number
+    #             address_info_text = driver.find_element_by_xpath("//span/span/span").text
+    #             address_cab_line = address_info_text.split("\n")[0]
+    #             if "WBC FTTP" in driver.find_element_by_xpath("//tr[2]/td/span").text:
+    #                 print "Checking address {0} {1}".format(str(x), postcode)
+    #                 print "Cabinet {0}".format(address_cab_line[-3:])
+    #                 #self.assertEqual("WBC FTTP", driver.find_element_by_xpath("//tr[2]/td/span").text,"{0} {1} is not FTTP enabled".format(str(x), postcode))
+    #             time.sleep(5)
 
     def test_postcode_address_checker(self):
         for postcode in POSTCODES_NUMBERS:
